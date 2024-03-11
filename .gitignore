@@ -1,5 +1,6 @@
 serviceAccountKey.json
-.vscode/
+.vscode
+.dev_utils
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
