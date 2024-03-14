@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Request
 from fastui import AnyComponent, FastUI
 from fastui import components as c
-from fastui.events import BackEvent, GoToEvent, PageEvent
+from fastui.events import GoToEvent
 from fastui.forms import fastui_form
 
 from .models import LongURL, ShortURL

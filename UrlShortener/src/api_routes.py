@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, Request
+from fastapi.responses import RedirectResponse
 from pydantic import ValidationError
 
 from .models import LongURL, ShortURL
@@ -19,9 +20,9 @@ async def shorten_url(url: LongURL, request: Request) -> ShortURL:
 
 
 @router.get("/{short_code}")
-async def redirect_url(short_code: str) -> LongURL:
+async def redirect_url(short_code: str):
     try:
         long_url: LongURL = await fetch_redirect_url(short_code)
-        return long_url
+        return RedirectResponse(url=str(long_url.url), status_code=302)
     except KeyError as exc:
         raise HTTPException(status_code=404, detail="URL does not exists") from exc
