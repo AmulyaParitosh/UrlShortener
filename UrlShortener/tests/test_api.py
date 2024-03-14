@@ -13,12 +13,12 @@ class TestApi(unittest.TestCase):
         long_url = "https://example.com/"
         response = client.post("/shorten", json={"url": long_url})
         self.assertEqual(response.status_code, 200)
-        self.assertIn("shortened_url", response.json())
+        self.assertIn("url", response.json())
 
     def test_redirect_url(self):
         long_url = "https://example.com/"
         response = client.post("/shorten", json={"url": long_url})
-        short_url = response.json()["shortened_url"]
+        short_url = response.json()["url"]
         response = client.get(short_url)
         self.assertEqual(response.status_code, 200)
         self.assertIn("url", response.json())
