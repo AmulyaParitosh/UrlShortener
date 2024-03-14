@@ -7,7 +7,7 @@ from UrlShortener.api import app
 client = TestClient(app)
 
 
-class TestURLShortener(unittest.TestCase):
+class TestApi(unittest.TestCase):
 
     def test_shorten_url(self):
         long_url = "https://example.com/"
