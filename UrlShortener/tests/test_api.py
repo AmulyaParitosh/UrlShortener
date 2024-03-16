@@ -21,8 +21,7 @@ class TestApi(unittest.TestCase):
         short_url = response.json()["url"]
         response = client.get(short_url)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("url", response.json())
-        self.assertEqual(response.json()["url"], long_url)
+        self.assertEqual(response.url, long_url)
 
     def test_invalid_short_code(self):
         invalid_short_code = "invalid"

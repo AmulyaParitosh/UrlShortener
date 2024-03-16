@@ -1,13 +1,13 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, BackgroundTasks, Request
 from fastui import AnyComponent, FastUI
 from fastui import components as c
 from fastui.events import GoToEvent
 from fastui.forms import fastui_form
 
-from .models import LongURL, ShortURL
-from .shortener import generate_shorten_url
+from ..models import LongURL, ShortURL
+from .api_routes import shorten_url as generate_shorten_url
 
 router = APIRouter(prefix="/api")
 
@@ -28,9 +28,11 @@ def root() -> list[AnyComponent]:
 
 @router.post("/shorten2/", response_model=FastUI, response_model_exclude_none=True)
 async def test_shorten_url(
-    form: Annotated[LongURL, fastui_form(LongURL)], request: Request
+    form: Annotated[LongURL, fastui_form(LongURL)],
+    request: Request,
+    background_tasks: BackgroundTasks,
 ) -> list[AnyComponent]:
-    _short_url: ShortURL = await generate_shorten_url(str(request.base_url), form)
+    _short_url: ShortURL = await generate_shorten_url(form, request, background_tasks)
     short_url: str = str(_short_url.url)
     return [
         c.Page(
