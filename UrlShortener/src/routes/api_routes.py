@@ -1,6 +1,6 @@
 from fastapi import APIRouter, BackgroundTasks, HTTPException, Request
 from fastapi.responses import RedirectResponse
-from pydantic import AnyUrl, ValidationError
+from pydantic import ValidationError
 
 from ..db import (
     remove_expired_urls,
@@ -13,7 +13,7 @@ from ..models import LongURL, ShortURL, URLMapSchema
 router = APIRouter()
 
 
-@router.post("/shorten")
+@router.post("/api/shorten")
 async def shorten_url(
     long_url: LongURL, request: Request, background_tasks: BackgroundTasks
 ) -> ShortURL:
@@ -28,7 +28,7 @@ async def shorten_url(
         finally:
             background_tasks.add_task(remove_expired_urls)
 
-        return ShortURL(url=AnyUrl(f"{request.base_url}q/{url_map.code}"))
+        return ShortURL(url=f"{request.base_url}?q={url_map.code}")
 
     except ValidationError as exc:
         raise HTTPException(
@@ -36,16 +36,14 @@ async def shorten_url(
         ) from exc
 
 
-@router.get("/q/{short_code}")
-async def redirect_url(
-    short_code: str, background_tasks: BackgroundTasks
-) -> RedirectResponse:
+@router.get("/")
+async def redirect_url(q: str, background_tasks: BackgroundTasks) -> RedirectResponse:
     try:
-        doc = search_doc_by_code(short_code)
-    except KeyError:
-        raise HTTPException(status_code=404, detail="URL does not exists")
+        doc = search_doc_by_code(q)
+    except KeyError as ke:
+        raise HTTPException(status_code=404, detail="URL does not exists") from ke
 
     url_map = URLMapSchema(**doc.to_dict())
     background_tasks.add_task(url_map.extend_expiration, 12)
 
-    return RedirectResponse(url=str(url_map.long_url), status_code=302)
+    return RedirectResponse(url=url_map.long_url, status_code=301)
