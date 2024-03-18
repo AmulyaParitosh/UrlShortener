@@ -11,4 +11,4 @@ app.include_router(ui_routes.router)
 @app.get("/{path:path}")
 async def html_landing() -> HTMLResponse:
     """Simple HTML page which serves the React app, comes last as it matches all paths."""
-    return HTMLResponse(prebuilt_html(title="URL Shortener"))
+    return HTMLResponse(prebuilt_html(title="URL Shortener", api_root_url="/ui"))
