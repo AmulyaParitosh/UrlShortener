@@ -2,10 +2,14 @@ from datetime import datetime, timedelta
 from typing import Annotated, Optional
 from uuid import uuid4
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from pydantic.functional_validators import AfterValidator
 
 from .db import update_doc_by_code
+
+
+class ShortURL(BaseModel):
+    url: Annotated[str, AfterValidator(lambda url: url.strip())]
 
 
 class LongURL(BaseModel):
@@ -31,13 +35,9 @@ class LongURLForm(BaseModel):
     )
 
 
-class ShortURL(BaseModel):
-    url: Annotated[str, AfterValidator(lambda url: url.strip())]
-
-
 class URLMapSchema(BaseModel):
     long_url: Annotated[str, AfterValidator(lambda url: url.strip())]
-    code: str = Field(default_factory=lambda: uuid4().hex)
+    code: str = Field(default_factory=lambda: uuid4().hex, validate_default=True)
     expiration: datetime = Field(
         default_factory=lambda: datetime.now() + timedelta(hours=12)
     )
@@ -47,3 +47,8 @@ class URLMapSchema(BaseModel):
             raise ValueError("Expiration time should be greater than 1 hour")
         self.expiration = datetime.now() + timedelta(hours=hours)
         update_doc_by_code(self.code, self.model_dump())
+
+    @field_validator("code")
+    @classmethod
+    def add_prefix(cls, code: str) -> str:
+        return code if code.startswith("q_") else f"q_{code}"
