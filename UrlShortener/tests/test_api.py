@@ -1,4 +1,3 @@
-import re
 import unittest
 from datetime import datetime
 from unittest.mock import MagicMock, patch
@@ -6,7 +5,7 @@ from unittest.mock import MagicMock, patch
 from fastapi import HTTPException
 from fastapi.testclient import TestClient
 
-from UrlShortener.api import app
+from UrlShortener.src.api import app
 
 client = TestClient(app)
 

@@ -2,7 +2,7 @@ from fastapi import BackgroundTasks, FastAPI
 from fastapi.responses import HTMLResponse
 from fastui import prebuilt_html
 
-from .src.routes import api_routes, base_routes, ui_routes
+from .routes import api_routes, base_routes, ui_routes
 
 app = FastAPI()
 app.include_router(base_routes.router)
