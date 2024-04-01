@@ -3,7 +3,7 @@
 [x] remote repo on github\
 [x] docker\
 [x] custom code\
-[ ] increase short-code length limit\
+[x] increase short-code length limit to upto 32\
 [ ] admin control for manupulating urls-mapping and expiration timings\
-[ ] deploy the docker contailer\
-[ ] attach with subdomain (to my website)\
+[x] deploy the docker contailer\
+[x] attach with subdomain (to my website)\

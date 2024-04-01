@@ -5,7 +5,7 @@ from uuid import uuid4
 from pydantic import BaseModel, Field, field_validator
 from pydantic.functional_validators import AfterValidator
 
-from .db import update_doc_by_code
+from .db import search_doc_by_code, update_doc_by_code
 
 
 class ShortURL(BaseModel):
@@ -28,11 +28,20 @@ class LongURLForm(BaseModel):
     code: Optional[str] = Field(
         title="Short code",
         description="Custom short code for the URL",
-        max_length=10,
+        max_length=32,
         min_length=1,
         pattern=r"^[a-zA-Z0-9_-]+$",
         default=None,
     )
+
+    @field_validator("code")
+    @classmethod
+    def validate_unique_code(cls, code: str) -> str:
+        try:
+            search_doc_by_code(f"q_{code}")
+            raise ValueError(f"{code} already exists in the database")
+        except KeyError:
+            return code
 
 
 class URLMapSchema(BaseModel):
