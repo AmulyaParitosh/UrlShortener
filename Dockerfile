@@ -1,4 +1,8 @@
-FROM python:3.11-buster
+FROM python:3.11-slim
+
+LABEL org.opencontainers.image.source https://github.com/AmulyaParitosh/UrlShortener
+LABEL org.opencontainers.image.description="UrlShortener Container Image"
+LABEL org.opencontainers.image.licenses=MIT
 
 RUN pip install poetry==1.3.2
 
